@@ -54,7 +54,6 @@ public class TerminalCompletionTest {
 		String[] commands = { command1, command2, command3 };
 		for (String command : commands) {
 			completion.addToHistory(command);
-			Thread.sleep(0,1);
 		}
 
 		assertEquals(commands.length, completion.find(partialMatch).size());
@@ -70,7 +69,6 @@ public class TerminalCompletionTest {
 		String[] commands = { command1, command2, command3 };
 		for (String command : commands) {
 			completion.addToHistory(command);
-			Thread.sleep(0,1);
 		}
 
 		// Add a non matching command
