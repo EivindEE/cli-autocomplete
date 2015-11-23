@@ -32,7 +32,7 @@ public class MapTerminalCompletion implements TerminalCompletion {
 	}
 
 	@Override
-	public void addToHistory(String command) {
+	public synchronized void  addToHistory(String command) {
 		if (hayStack.containsKey(command)) {
 			hayStack.get(command).used();
 		} else {
@@ -42,7 +42,7 @@ public class MapTerminalCompletion implements TerminalCompletion {
 	}
 
 	@Override
-	public ArrayList<String> find(String needle) {
+	public synchronized ArrayList<String> find(String needle) {
 
 		Ordering<String> ordering = Ordering.from(comparator).onResultOf(Functions.forMap(this.hayStack));
 		ImmutableSortedMap<String, CommandEntry> orderedHay = ImmutableSortedMap.copyOf(this.hayStack, ordering);
