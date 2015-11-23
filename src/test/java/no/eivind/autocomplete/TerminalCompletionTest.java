@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -79,6 +81,7 @@ public class TerminalCompletionTest {
 	
 	@Test
 	public void findMultipelMatchesSortedByUsage() {
+
 		String partialMatch = "cd ";
 		String command1 = partialMatch + "/etc/";
 		String command2 = partialMatch + "~";
@@ -90,7 +93,6 @@ public class TerminalCompletionTest {
 				completion.addToHistory(commands[i]);
 			}
 		}
-		
 
 		assertEquals(commands[commands.length -1], completion.find(partialMatch).get(0));
 	}
