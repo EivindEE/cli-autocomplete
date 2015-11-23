@@ -14,8 +14,14 @@ public class MapTerminalCompletion implements TerminalCompletion {
 	}
 
 	@Override
-	public List<String> find(String needle) {
-		return this.hayStack;
+	public ArrayList<String> find(String needle) {
+		ArrayList<String> needles = new ArrayList<>();
+		for (String straw : this.hayStack) {
+			if (straw.equals(needle)) {
+				needles.add(straw);
+			}
+		}
+		return needles;
 	}
 
 }

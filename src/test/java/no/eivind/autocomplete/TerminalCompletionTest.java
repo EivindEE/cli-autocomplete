@@ -24,5 +24,13 @@ public class TerminalCompletionTest {
 		completion.addToHistory(command);
 		assertTrue(completion.find(command).contains(command));
 	}
+	
+	@Test
+	public void ignoresNonMatchingCommands() {
+		String command = "command";
+		completion.addToHistory(command);
+		String nonMatchingCommand = command + " not command";
+		assertFalse(completion.find(nonMatchingCommand).contains(command));
+	}
 
 }
