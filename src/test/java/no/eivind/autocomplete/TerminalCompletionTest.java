@@ -4,8 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.List;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,7 +45,7 @@ public class TerminalCompletionTest {
 	}
 
 	@Test
-	public void findMultipelMatches() {
+	public void findMultipelMatches() throws InterruptedException {
 		String partialMatch = "cd ";
 		String command1 = partialMatch + "/etc/";
 		String command2 = partialMatch + "~";
@@ -60,9 +58,9 @@ public class TerminalCompletionTest {
 
 		assertEquals(commands.length, completion.find(partialMatch).size());
 	}
-	
+
 	@Test
-	public void findMultipelMatchesIgnoresNonMatching() {
+	public void findMultipelMatchesIgnoresNonMatching() throws InterruptedException {
 		String partialMatch = "cd ";
 		String command1 = partialMatch + "/etc/";
 		String command2 = partialMatch + "~";
@@ -72,13 +70,13 @@ public class TerminalCompletionTest {
 		for (String command : commands) {
 			completion.addToHistory(command);
 		}
-		
+
 		// Add a non matching command
 		completion.addToHistory(partialMatch.substring(1));
 
 		assertEquals(commands.length, completion.find(partialMatch).size());
 	}
-	
+
 	@Test
 	public void findMultipelMatchesSortedByUsage() {
 
@@ -94,6 +92,47 @@ public class TerminalCompletionTest {
 			}
 		}
 
-		assertEquals(commands[commands.length -1], completion.find(partialMatch).get(0));
+		assertEquals(commands[commands.length - 1], completion.find(partialMatch).get(0));
+	}
+
+	@Test
+	public void findMultipelMatchesSortedByLastUsed() throws InterruptedException {
+		this.completion = new MapTerminalCompletion(SortBy.LAST_USED);
+		String partialMatch = "cd ";
+		String command1 = partialMatch + "/etc/";
+		String command2 = partialMatch + "~";
+
+		completion.addToHistory(command2);
+		completion.addToHistory(command2);
+		// Sleep is necessary for ensured ordering in test
+		// Without sleep the difference is to small for date.compare to notice
+		Thread.sleep(0, 1);
+		String expectedCommand = command1;
+		completion.addToHistory(expectedCommand);
+
+		assertEquals(expectedCommand, completion.find(partialMatch).get(0));
+	}
+
+	@Test
+	public void removeLeastReasentlyUsedCommand() throws InterruptedException {
+		this.completion = new MapTerminalCompletion(2);
+		String command1 = "cd /etc/";
+		completion.addToHistory(command1);
+		// Sleep is necessary for ensured ordering in test
+		// Without sleep the difference is to small for date.compare to notice
+		Thread.sleep(0, 1);
+
+		String command2 = "ls /etc/bin";
+		completion.addToHistory(command2);
+		// Sleep is necessary for ensured ordering in test
+		// Without sleep the difference is to small for date.compare to notice
+		Thread.sleep(0, 1);
+
+		String command3 = "sh /etc/bin/testing.sh";
+		// Sleep is necessary for ensured ordering in test
+		// Without sleep the difference is to small for date.compare to notice
+		completion.addToHistory(command3);
+
+		assertFalse("Command should have been removed from history", completion.find(command1).contains(command1));
 	}
 }
