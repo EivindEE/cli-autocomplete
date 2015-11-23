@@ -104,6 +104,8 @@ public class TerminalCompletionTest {
 
 		completion.addToHistory(command2);
 		completion.addToHistory(command2);
+		// Sleep is necessary for ensured ordering in test
+		// Without sleep the difference is to small for date.compare to notice
 		Thread.sleep(0, 1);
 		String expectedCommand = command1;
 		completion.addToHistory(expectedCommand);
@@ -116,13 +118,19 @@ public class TerminalCompletionTest {
 		this.completion = new MapTerminalCompletion(2);
 		String command1 = "cd /etc/";
 		completion.addToHistory(command1);
+		// Sleep is necessary for ensured ordering in test
+		// Without sleep the difference is to small for date.compare to notice
 		Thread.sleep(0, 1);
 
 		String command2 = "ls /etc/bin";
 		completion.addToHistory(command2);
+		// Sleep is necessary for ensured ordering in test
+		// Without sleep the difference is to small for date.compare to notice
 		Thread.sleep(0, 1);
 
 		String command3 = "sh /etc/bin/testing.sh";
+		// Sleep is necessary for ensured ordering in test
+		// Without sleep the difference is to small for date.compare to notice
 		completion.addToHistory(command3);
 
 		assertFalse("Command should have been removed from history", completion.find(command1).contains(command1));

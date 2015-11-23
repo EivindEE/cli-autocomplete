@@ -30,6 +30,8 @@ public class CommandEntryTest {
 		assertEquals(expectedCallCount, this.entry.getUsedCount());
 
 		Date expectedBeforeCallDate = new Date();
+		// Sleep is necessary for ensured ordering in test
+		// Without sleep the difference is to small for date.compare to notice
 		Thread.sleep(0, 1);
 		this.entry = new CommandEntry(COMMAND);
 		Thread.sleep(0, 1);
@@ -40,6 +42,8 @@ public class CommandEntryTest {
 
 	@Test
 	public void usedTest() throws InterruptedException {
+		// Sleep is necessary for ensured ordering in test
+		// Without sleep the difference is to small for date.compare to notice
 		Thread.sleep(0, 1);
 		int currentUsed = this.entry.getUsedCount();
 		Date currentDate = this.entry.getLastUsed();
