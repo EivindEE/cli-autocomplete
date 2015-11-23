@@ -30,9 +30,9 @@ public class CommandEntryTest {
 		assertEquals(expectedCallCount, this.entry.getUsedCount());
 		
 		Date expectedBeforeCallDate = new Date();
-		Thread.sleep(5);
+		Thread.sleep(0,1);
 		this.entry = new CommandEntry(COMMAND);
-		Thread.sleep(5);
+		Thread.sleep(0,1);
 		Date expectedAfterCallDate = new Date();
 		assertTrue(this.entry.getLastUsed().after(expectedBeforeCallDate));
 		assertTrue(this.entry.getLastUsed().before(expectedAfterCallDate));
@@ -40,7 +40,7 @@ public class CommandEntryTest {
 	
 	@Test
 	public void usedTest() throws InterruptedException {
-		Thread.sleep(5);
+		Thread.sleep(0,1);
 		int currentUsed = this.entry.getUsedCount();
 		Date currentDate = this.entry.getLastUsed();
 		this.entry.used();

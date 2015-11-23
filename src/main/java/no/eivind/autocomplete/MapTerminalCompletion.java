@@ -2,37 +2,53 @@ package no.eivind.autocomplete;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.TreeMap;
+
+import com.google.common.base.Functions;
+import com.google.common.collect.ImmutableSortedMap;
+import com.google.common.collect.Ordering;
 
 public class MapTerminalCompletion implements TerminalCompletion {
 
-	private HashMap<String,Integer> hayStack = new HashMap<>();
-	private Comparator comparator = new Comparator<String>() {
-		@Override
-		public int compare(String o1, String o2) {
-			return hayStack.get(o1).compareTo(hayStack.get(o2));
-		};
-	}; 
+	private TreeMap<String,CommandEntry> hayStack = new TreeMap<>();
+	private final Comparator<CommandEntry> comparator;
+
+	public MapTerminalCompletion() {
+		this(SortBy.USAGE);
+	}
+
+	public MapTerminalCompletion(SortBy lastUsed) {
+		switch (lastUsed) {
+		case USAGE:
+			this.comparator = new CommandEntryUsageComparator();
+			break;
+		case LAST_USED:
+			this.comparator = new CommandEntryLastUsedComparator();
+			break;
+		default:
+			this.comparator = new CommandEntryUsageComparator();
+			break;
+		}
+	}
 
 	@Override
 	public void addToHistory(String command) {
-		Integer timesUsed;
 		if (hayStack.containsKey(command)) {
-			timesUsed = hayStack.get(command) + 1;
+			hayStack.get(command).used();
 		} else {
-			timesUsed = 1;
+			this.hayStack.put(command, new CommandEntry(command));
 		}
-		this.hayStack.put(command, timesUsed);
 
 	}
 
 	@Override
 	public ArrayList<String> find(String needle) {
+
+		Ordering<String> ordering = Ordering.from(comparator).onResultOf(Functions.forMap(this.hayStack));
+		ImmutableSortedMap<String, CommandEntry> orderedHay = ImmutableSortedMap.copyOf(this.hayStack, ordering);
+
 		ArrayList<String> needles = new ArrayList<>();
-		TreeMap<String, Integer> sortedHay = new TreeMap<>();
-		for (String straw : this.hayStack.keySet()) {
+		for (String straw : orderedHay.keySet()) {
 			if (straw.contains(needle)) {
 				needles.add(straw);
 			}

@@ -1,6 +1,6 @@
 package no.eivind.autocomplete;
 
 public enum SortBy {
-	USAGE
+	USAGE, LAST_USED
 
 }

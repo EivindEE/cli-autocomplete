@@ -4,8 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.List;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,7 +45,7 @@ public class TerminalCompletionTest {
 	}
 
 	@Test
-	public void findMultipelMatches() {
+	public void findMultipelMatches() throws InterruptedException {
 		String partialMatch = "cd ";
 		String command1 = partialMatch + "/etc/";
 		String command2 = partialMatch + "~";
@@ -56,13 +54,14 @@ public class TerminalCompletionTest {
 		String[] commands = { command1, command2, command3 };
 		for (String command : commands) {
 			completion.addToHistory(command);
+			Thread.sleep(0,1);
 		}
 
 		assertEquals(commands.length, completion.find(partialMatch).size());
 	}
-	
+
 	@Test
-	public void findMultipelMatchesIgnoresNonMatching() {
+	public void findMultipelMatchesIgnoresNonMatching() throws InterruptedException {
 		String partialMatch = "cd ";
 		String command1 = partialMatch + "/etc/";
 		String command2 = partialMatch + "~";
@@ -71,14 +70,15 @@ public class TerminalCompletionTest {
 		String[] commands = { command1, command2, command3 };
 		for (String command : commands) {
 			completion.addToHistory(command);
+			Thread.sleep(0,1);
 		}
-		
+
 		// Add a non matching command
 		completion.addToHistory(partialMatch.substring(1));
 
 		assertEquals(commands.length, completion.find(partialMatch).size());
 	}
-	
+
 	@Test
 	public void findMultipelMatchesSortedByUsage() {
 
@@ -95,5 +95,22 @@ public class TerminalCompletionTest {
 		}
 
 		assertEquals(commands[commands.length -1], completion.find(partialMatch).get(0));
+	}
+
+	@Test
+	public void findMultipelMatchesSortedByLastUsed() throws InterruptedException {
+		this.completion = new MapTerminalCompletion(SortBy.LAST_USED);
+		String partialMatch = "cd ";
+		String command1 = partialMatch + "/etc/";
+		String command2 = partialMatch + "~";
+
+
+		completion.addToHistory(command2);
+		completion.addToHistory(command2);
+		Thread.sleep(0,1);
+		String expectedCommand = command1;
+		completion.addToHistory(expectedCommand);
+
+		assertEquals(expectedCommand, completion.find(partialMatch).get(0));
 	}
 }
