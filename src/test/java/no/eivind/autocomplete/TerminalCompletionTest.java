@@ -76,4 +76,22 @@ public class TerminalCompletionTest {
 
 		assertEquals(commands.length, completion.find(partialMatch).size());
 	}
+	
+	@Test
+	public void findMultipelMatchesSortedByUsage() {
+		String partialMatch = "cd ";
+		String command1 = partialMatch + "/etc/";
+		String command2 = partialMatch + "~";
+		String command3 = partialMatch + "~/development";
+
+		String[] commands = { command1, command2, command3 };
+		for (int i = 0; i < commands.length; i++) {
+			for (int j = 0; j <= i; j++) {
+				completion.addToHistory(commands[i]);
+			}
+		}
+		
+
+		assertEquals(commands[commands.length -1], completion.find(partialMatch).get(0));
+	}
 }

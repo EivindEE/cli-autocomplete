@@ -1,7 +1,6 @@
 package no.eivind.autocomplete;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class MapTerminalCompletion implements TerminalCompletion {
 
