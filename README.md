@@ -1,5 +1,6 @@
 Terminal Auto Complete
 ======================
+[![Build Status](https://travis-ci.org/EivindEE/cli-autocomplete.svg)](https://travis-ci.org/EivindEE/cli-autocomplete)
 
 I small implementation of a auto complete API.
 
