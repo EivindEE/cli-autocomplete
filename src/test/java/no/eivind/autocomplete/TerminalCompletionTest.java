@@ -92,7 +92,7 @@ public class TerminalCompletionTest {
 			}
 		}
 
-		assertEquals(commands[commands.length -1], completion.find(partialMatch).get(0));
+		assertEquals(commands[commands.length - 1], completion.find(partialMatch).get(0));
 	}
 
 	@Test
@@ -102,13 +102,29 @@ public class TerminalCompletionTest {
 		String command1 = partialMatch + "/etc/";
 		String command2 = partialMatch + "~";
 
-
 		completion.addToHistory(command2);
 		completion.addToHistory(command2);
-		Thread.sleep(0,1);
+		Thread.sleep(0, 1);
 		String expectedCommand = command1;
 		completion.addToHistory(expectedCommand);
 
 		assertEquals(expectedCommand, completion.find(partialMatch).get(0));
+	}
+
+	@Test
+	public void removeLeastReasentlyUsedCommand() throws InterruptedException {
+		this.completion = new MapTerminalCompletion(2);
+		String command1 = "cd /etc/";
+		completion.addToHistory(command1);
+		Thread.sleep(0, 1);
+
+		String command2 = "ls /etc/bin";
+		completion.addToHistory(command2);
+		Thread.sleep(0, 1);
+
+		String command3 = "sh /etc/bin/testing.sh";
+		completion.addToHistory(command3);
+
+		assertFalse("Command should have been removed from history", completion.find(command1).contains(command1));
 	}
 }

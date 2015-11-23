@@ -10,15 +10,25 @@ import com.google.common.collect.Ordering;
 
 public class MapTerminalCompletion implements TerminalCompletion {
 
-	private TreeMap<String,CommandEntry> hayStack = new TreeMap<>();
+	private TreeMap<String, CommandEntry> hayStack = new TreeMap<>();
 	private final Comparator<CommandEntry> comparator;
+	private int historySize;
+	private CommandEntryLastUsedComparator lastUsedComparator = new CommandEntryLastUsedComparator();
 
 	public MapTerminalCompletion() {
 		this(SortBy.USAGE);
 	}
 
-	public MapTerminalCompletion(SortBy lastUsed) {
-		switch (lastUsed) {
+	public MapTerminalCompletion(SortBy sorting) {
+		this(sorting, 100);
+	}
+
+	public MapTerminalCompletion(int historySize) {
+		this(SortBy.USAGE, historySize);
+	}
+
+	public MapTerminalCompletion(SortBy sorting, int historySize) {
+		switch (sorting) {
 		case USAGE:
 			this.comparator = new CommandEntryUsageComparator();
 			break;
@@ -29,14 +39,19 @@ public class MapTerminalCompletion implements TerminalCompletion {
 			this.comparator = new CommandEntryUsageComparator();
 			break;
 		}
+
+		this.historySize = historySize;
 	}
 
 	@Override
-	public synchronized void  addToHistory(String command) {
+	public synchronized void addToHistory(String command) {
 		if (hayStack.containsKey(command)) {
 			hayStack.get(command).used();
 		} else {
 			this.hayStack.put(command, new CommandEntry(command));
+		}
+		if (this.hayStack.size() > this.historySize) {
+			removeLeastReasentlyUsedCommand();
 		}
 
 	}
@@ -56,4 +71,11 @@ public class MapTerminalCompletion implements TerminalCompletion {
 		return needles;
 	}
 
+	private synchronized void removeLeastReasentlyUsedCommand() {
+		Ordering<String> ordering = Ordering.from(lastUsedComparator).onResultOf(Functions.forMap(this.hayStack));
+		ImmutableSortedMap<String, CommandEntry> orderedHay = ImmutableSortedMap.copyOf(this.hayStack, ordering);
+		String oldestKey = orderedHay.keySet().last();
+
+		hayStack.remove(oldestKey);
+	}
 }
