@@ -10,15 +10,19 @@ public class TerminalCompletionTest {
 	private TerminalCompletion completion;
 	@Before
 	public void setUp() throws Exception {
+		this.completion = new MapTerminalCompletion();
 	}
 
 	@After
 	public void tearDown() throws Exception {
+		
 	}
 
 	@Test
-	public void test() {
-		fail("Not yet implemented");
+	public void findExactMatches() {
+		String command = "command";
+		completion.addToHistory(command);
+		assertTrue(completion.find(command).contains(command));
 	}
 
 }
