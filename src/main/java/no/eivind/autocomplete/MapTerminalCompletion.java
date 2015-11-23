@@ -17,7 +17,7 @@ public class MapTerminalCompletion implements TerminalCompletion {
 	public ArrayList<String> find(String needle) {
 		ArrayList<String> needles = new ArrayList<>();
 		for (String straw : this.hayStack) {
-			if (straw.equals(needle)) {
+			if (straw.contains(needle)) {
 				needles.add(straw);
 			}
 		}
